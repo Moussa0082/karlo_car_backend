@@ -62,7 +62,8 @@ public class UserService {
 
     public User updateUser(User user, String id) {
         User u = userRepository.findById(id).orElseThrow(() -> new IllegalStateException("User non trouvé") );
-
+        String passWordHasher = passwordEncoder.encode(user.getPassword());
+        u.setPassword(passWordHasher);
         u.setNomUser(user.getNomUser());
         u.setAdresse(user.getAdresse());
         u.setEmail(user.getEmail());
