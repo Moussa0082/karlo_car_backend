@@ -50,6 +50,9 @@ public class VoitureLouerService {
     MarqueRepository marqueRepository;
     @Autowired
     HistoriqueService historiqueService;
+    @Autowired
+    FileUpload fileUploade;
+
 
     public VoitureLouer createVoiture(VoitureLouer vLouer, List<MultipartFile> imageFiles) throws Exception {
         // Vérification de l'existence des entités associées
@@ -71,7 +74,7 @@ public class VoitureLouerService {
     
         // Traitement des fichiers d'images
         if (imageFiles != null && !imageFiles.isEmpty()) {
-            String imageLocation = "C:\\xampp\\htdocs\\karlo";
+              String imageLocation = "/karlo"; 
             // String imageLocation = "C:\\Users\\bane8\\Documents\\Spring Boot App\\Karlo_car\\images";
             Path imageRootLocation = Paths.get(imageLocation);
             if (!Files.exists(imageRootLocation)) {
@@ -85,7 +88,8 @@ public class VoitureLouerService {
                     Path imagePath = imageRootLocation.resolve(imageName);
                     try {
                         Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-                        imagePaths.add("/karlo/" + imageName);
+                        String onlineImagePath =fileUploade.uploadImageToFTP(imagePath, imageName);
+                        imagePaths.add(imageName);
                     } catch (IOException e) {
                         throw new IOException("Erreur lors de la sauvegarde de l'image : " + imageFile.getOriginalFilename(), e);
                     }
@@ -138,7 +142,7 @@ public class VoitureLouerService {
     
         // Traitement des fichiers d'images
         if (imageFiles != null && !imageFiles.isEmpty()) {
-            String imageLocation = "C:\\xampp\\htdocs\\karlo";
+              String imageLocation = "/karlo"; 
             Path imageRootLocation = Paths.get(imageLocation);
             if (!Files.exists(imageRootLocation)) {
                 Files.createDirectories(imageRootLocation);
@@ -159,7 +163,8 @@ public class VoitureLouerService {
                     Path imagePath = imageRootLocation.resolve(imageName);
                     try {
                         Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-                        imagePaths.add("/karlo/" + imageName);
+                        String onlineImagePath =fileUploade.uploadImageToFTP(imagePath, imageName);
+                        imagePaths.add(imageName);
                     } catch (IOException e) {
                         throw new IOException("Erreur lors de la sauvegarde de l'image : " + imageFile.getOriginalFilename(), e);
                     }
@@ -201,7 +206,7 @@ public class VoitureLouerService {
     
     //      // Traitement des fichiers d'images
     //      if (imageFiles != null && !imageFiles.isEmpty()) {
-    //         String imageLocation = "C:\\xampp\\htdocs\\karlo";
+    //           String imageLocation = "/karlo"; 
     //         Path imageRootLocation = Paths.get(imageLocation);
     //         if (!Files.exists(imageRootLocation)) {
     //             Files.createDirectories(imageRootLocation);
@@ -232,6 +237,17 @@ public class VoitureLouerService {
 
     public List<VoitureLouer> getAllVoiture(){
         List<VoitureLouer> voitureList = voitureLouerRepository.findAll();
+
+        if (voitureList.isEmpty())
+            throw new EntityNotFoundException("Aucune voiture trouvée");
+
+        voitureList.sort(Comparator.comparing(VoitureLouer::getDateAjout).reversed());
+
+        return voitureList;
+    }
+
+    public List<VoitureLouer> getAllVoitureLouerByUser(String idUser){
+        List<VoitureLouer> voitureList = voitureLouerRepository.findAllByUserIdUser(idUser);
 
         if (voitureList.isEmpty())
             throw new EntityNotFoundException("Aucune voiture trouvée");

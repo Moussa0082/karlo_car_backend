@@ -24,4 +24,7 @@ public interface ReservationRepository extends JpaRepository<Reservation,String>
 
       @Query("SELECT SUM(r.montant) FROM Reservation r")
       Long calculateTotalReservation();
+
+
+    Reservation findByIdReservation(String idReservation);
 }

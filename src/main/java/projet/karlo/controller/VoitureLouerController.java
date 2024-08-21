@@ -107,6 +107,12 @@ public class VoitureLouerController {
                 return new ResponseEntity<>(voitureServices.getAllVoitureByTypeBoite(nom),HttpStatus.OK);
             }
 
+            @GetMapping("/getAllVoitureLouerByUser/{idUser}")
+            @Operation(summary="Liste de toutes les voitures à louer par utilisateur")
+            public ResponseEntity<List<VoitureLouer>> getAllVoitureLouerByUser(@PathVariable String idUser){
+                return new ResponseEntity<>(voitureServices.getAllVoitureLouerByUser(idUser),HttpStatus.OK);
+            }
+
 
             @GetMapping("/searchVoituresLouer")
             public List<VoitureLouer> searchVoitures(

@@ -37,8 +37,11 @@ public class ReservationService {
     VoitureLouerRepository voitureLouerRepository;
     @Autowired
     HistoriqueService historiqueService;
+    @Autowired
+    FileUpload fileUploade;
 
-    public Reservation createReservation (Reservation reservation, List<MultipartFile> imageFiles) throws IOException {
+
+    public Reservation createReservation (Reservation reservation, List<MultipartFile> imageFiles) throws Exception {
         VoitureLouer vlouer = vRepository.findById( reservation.getVoitureLouer().getIdVoiture()).orElseThrow();
         if (vlouer != null) {
             vlouer.setIsDisponible(false); // Mettre le statut à false non dispo
@@ -47,7 +50,7 @@ public class ReservationService {
         }
         // Traitement des fichiers d'images
     if (imageFiles != null && !imageFiles.isEmpty()) {
-        String imageLocation = "C:\\xampp\\htdocs\\karlo";
+          String imageLocation = "/karlo"; 
         Path imageRootLocation = Paths.get(imageLocation);
         if (!Files.exists(imageRootLocation)) {
             Files.createDirectories(imageRootLocation);
@@ -60,7 +63,8 @@ public class ReservationService {
                 Path imagePath = imageRootLocation.resolve(imageName);
                 try {
                     Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-                    imagePaths.add("/karlo/" + imageName);
+                    String onlineImagePath =fileUploade.uploadImageToFTP(imagePath, imageName);
+                    imagePaths.add(imageName);
                 } catch (IOException e) {
                     throw new IOException("Erreur lors de la sauvegarde de l'image : " + imageFile.getOriginalFilename(), e);
                 }
@@ -81,7 +85,7 @@ public class ReservationService {
         return rRepository.save(reservation);
     }
 
-    public Reservation updateReservation(Reservation reservation, String id , List<MultipartFile> imageFiles ) throws IOException{
+    public Reservation updateReservation(Reservation reservation, String id , List<MultipartFile> imageFiles ) throws Exception{
         Reservation res = rRepository.findById(id).orElseThrow();
 
         res.setDateDebut(reservation.getDateDebut());
@@ -97,7 +101,7 @@ public class ReservationService {
 
           // Traitement des fichiers d'images
     if (imageFiles != null && !imageFiles.isEmpty()) {
-        String imageLocation = "C:\\xampp\\htdocs\\karlo";
+          String imageLocation = "/karlo"; 
         Path imageRootLocation = Paths.get(imageLocation);
         if (!Files.exists(imageRootLocation)) {
             Files.createDirectories(imageRootLocation);
@@ -110,7 +114,8 @@ public class ReservationService {
                 Path imagePath = imageRootLocation.resolve(imageName);
                 try {
                     Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-                    imagePaths.add("/karlo/" + imageName);
+                    String onlineImagePath =fileUploade.uploadImageToFTP(imagePath, imageName);
+                    imagePaths.add(imageName);
                 } catch (IOException e) {
                     throw new IOException("Erreur lors de la sauvegarde de l'image : " + imageFile.getOriginalFilename(), e);
                 }

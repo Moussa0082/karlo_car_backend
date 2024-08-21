@@ -36,8 +36,11 @@ public class VenteService {
     VoitureVendreRepository voitureVendreRepository;
     @Autowired
     HistoriqueService historiqueService;
+    @Autowired
+    FileUpload fileUploade;
 
-     public Vente createVente (Vente vente, List<MultipartFile> imageFiles) throws IOException {
+
+     public Vente createVente (Vente vente, List<MultipartFile> imageFiles) throws Exception {
         VoitureVendre vVendre = vRepository.findById( vente.getVoitureVendre().getIdVoiture()).orElseThrow();
     if (vVendre != null) {
         vVendre.setIsVendu(true); // Mettre le statut à true
@@ -47,7 +50,7 @@ public class VenteService {
 
         // Traitement des fichiers d'images
     if (imageFiles != null && !imageFiles.isEmpty()) {
-        String imageLocation = "C:\\xampp\\htdocs\\karlo";
+          String imageLocation = "/karlo"; 
         Path imageRootLocation = Paths.get(imageLocation);
         if (!Files.exists(imageRootLocation)) {
             Files.createDirectories(imageRootLocation);
@@ -60,7 +63,8 @@ public class VenteService {
                 Path imagePath = imageRootLocation.resolve(imageName);
                 try {
                     Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-                    imagePaths.add("/karlo/" + imageName);
+                    String onlineImagePath =fileUploade.uploadImageToFTP(imagePath, imageName);
+                    imagePaths.add(imageName);
                 } catch (IOException e) {
                     throw new IOException("Erreur lors de la sauvegarde de l'image : " + imageFile.getOriginalFilename(), e);
                 }
@@ -81,7 +85,7 @@ public class VenteService {
         return venteRepository.save(vente);
     }
 
-    public Vente updateVente(Vente vente, String id , List<MultipartFile> imageFiles ) throws IOException{
+    public Vente updateVente(Vente vente, String id , List<MultipartFile> imageFiles ) throws Exception{
         Vente vExistant = venteRepository.findById(id).orElseThrow();
 
 
@@ -97,7 +101,7 @@ public class VenteService {
 
           // Traitement des fichiers d'images
     if (imageFiles != null && !imageFiles.isEmpty()) {
-        String imageLocation = "C:\\xampp\\htdocs\\karlo";
+          String imageLocation = "/karlo"; 
         Path imageRootLocation = Paths.get(imageLocation);
         if (!Files.exists(imageRootLocation)) {
             Files.createDirectories(imageRootLocation);
@@ -110,7 +114,8 @@ public class VenteService {
                 Path imagePath = imageRootLocation.resolve(imageName);
                 try {
                     Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-                    imagePaths.add("/karlo/" + imageName);
+                    String onlineImagePath =fileUploade.uploadImageToFTP(imagePath, imageName);
+                    imagePaths.add(imageName);
                 } catch (IOException e) {
                     throw new IOException("Erreur lors de la sauvegarde de l'image : " + imageFile.getOriginalFilename(), e);
                 }

@@ -48,4 +48,7 @@ List<VoitureVendre> searchVoitures(@Param("nomMarque") String nomMarque,
                                @Param("prixAugmente") Integer prixAugmente);
 
 
+    List<VoitureVendre> findAllByUserIdUser(String idUser);
+
+
 }

@@ -99,6 +99,12 @@ public class VoitureVendreController {
                 return new ResponseEntity<>(voitureServices.desactive(id), HttpStatus.OK);
             }
 
+            @GetMapping("/getAllVoitureVendreByUser/{idUser}")
+            @Operation(summary="Liste de toutes les voitures à vendre par utilisateur")
+            public ResponseEntity<List<VoitureVendre>> getAllVoitureVendreByUser(@PathVariable String idUser){
+                return new ResponseEntity<>(voitureServices.getAllVoitureVendreByUser(idUser),HttpStatus.OK);
+            }
+
 
             @GetMapping("/getAllVoiture")
             @Operation(summary="Liste de toutes les Voitures")

@@ -120,7 +120,7 @@ public class UserService {
         }
     
         if (!user.getStatut()) {
-            throw new NoContentException("Connexion échouée : votre compte est désactivé.");
+            throw new IllegalArgumentException("Connexion échouée : votre compte est désactivé.");
         }
     
         String pattern = "yyyy-MM-dd HH:mm";
@@ -136,10 +136,10 @@ public class UserService {
             // Échouer la connexion
             throw new IllegalArgumentException("Connexion échouée : un appareil est déjà connecté avec ce compte.");
         }
-        if (user != null && user.getRole().getLibelle().toLowerCase().equals("user")) {
-            // Échouer la connexion
-            throw new IllegalArgumentException("Connexion échouée : juste les administrateurs sont autorisés à se connecter à ce panel.");
-        }
+        // if (user != null && user.getRole().getLibelle().toLowerCase().equals("user")) {
+        //     // Échouer la connexion
+        //     throw new IllegalArgumentException("Connexion échouée : juste les administrateurs sont autorisés à se connecter à ce panel.");
+        // }
         
     
         // Mettre à jour l'état de connexion de l'utilisateur
@@ -182,6 +182,7 @@ public class UserService {
                 throw new IllegalStateException("L'utilisateur n'est pas actuellement connecté.");
             }
             user.setIsConnected(false);
+            historiqueService.createHistorique("Déconnexion de  " + user.getNomUser() + ", rôle " + user.getRole().getLibelle());
             userRepository.save(user);
         }
 

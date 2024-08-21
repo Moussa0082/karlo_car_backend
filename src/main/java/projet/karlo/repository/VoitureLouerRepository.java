@@ -55,4 +55,7 @@ public interface VoitureLouerRepository extends JpaRepository<VoitureLouer,Strin
                                       @Param("nomTypeReservoir") String nomTypeReservoir,
                                       @Param("prixAugmente") Integer prixAugmente);
 
+
+    List<VoitureLouer> findAllByUserIdUser(String idUser);
+
 }

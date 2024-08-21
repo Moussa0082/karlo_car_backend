@@ -10,6 +10,6 @@ public class KarloApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(KarloApplication.class, args);
 	}
-                                                          
+                                                              
 	
 }
